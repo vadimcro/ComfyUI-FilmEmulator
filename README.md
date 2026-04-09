@@ -50,6 +50,9 @@ Digital noise is uniform TV static. Analog grain is physical dye clouds that clu
 # 🚀 Installation & Usage
 
 Install as a usual Git.
+
+Usage is simple: plug in image as input and preview or save image as output, choose a film emulsion from drop-down, play with sliders and hit queue/run...
+
 Film Profiles are included in \profiles folder (every emulsion preset has 2 corresponding files: JSON & CSV)
 
 Required packages (pretty much standard set included with python env):
