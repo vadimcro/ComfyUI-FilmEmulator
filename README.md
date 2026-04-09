@@ -4,11 +4,12 @@
 # 🎞️ Procedural Analog Film Emulator (Hybrid Engine)
 
 A professional-grade imaging pipeline designed to transform sterile, microscopically sharp digital and AI-generated images into authentic analog photographs. Available as a standalone Asynchronous UI app and a ComfyUI Custom Node.
-🧠 The Philosophy: Why Not Just Use LUTs?
+
+# 🧠 The Philosophy: Why Not Just Use LUTs?
 
 Most "film filters" rely on 3D LUTs (.cube files). A LUT is a rigid mathematical grid that shifts colors; it has no concept of physical space, light scatter, or emulsion thickness. It feels "pasted on" because it is.
 
-This engine utilizes a Hybrid Procedural Pipeline, inspired by high-end cinema grading too
+# 🔬 This engine utilizes a Hybrid Procedural Pipeline, inspired by high-end cinema grading too
 
 The Empirical Core: It uses JSON-based characteristic curves extracted from real film stocks to perfectly map exposure densities.
 The Procedural Physics: It wraps those curves in real-time physical simulations of vintage glass, chemical light scatter, darkroom printing, and signal-dependent silver halide grain.
