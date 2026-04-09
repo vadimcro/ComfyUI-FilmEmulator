@@ -1,3 +1,6 @@
+<img width="1531" height="635" alt="image" src="https://github.com/user-attachments/assets/53ba4f02-4d6e-4014-b881-71a9a21697d0" />
+
+
 # 🎞️ Procedural Analog Film Emulator (Hybrid Engine)
 
 A professional-grade imaging pipeline designed to transform sterile, microscopically sharp digital and AI-generated images into authentic analog photographs. Available as a standalone Asynchronous UI app and a ComfyUI Custom Node.
