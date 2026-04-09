@@ -1,0 +1,23 @@
+{
+    "manufacturer": "FujiFilm",
+    "film_name": "FUJICOLOR PRO 160C",
+    "properties": {
+        "film_type": "negative"
+    },
+    "density_anchors": {
+        "d_min": {
+            "r": 0.234,
+            "g": 0.7,
+            "b": 1.042
+        },
+        "d_max": {
+            "r": 2.393,
+            "g": 2.859,
+            "b": 2.815
+        }
+    },
+    "data_files": {
+        "characteristic_curve": "fujifilm_fujicolor_pro_160c_char.csv"
+    }
+    
+}

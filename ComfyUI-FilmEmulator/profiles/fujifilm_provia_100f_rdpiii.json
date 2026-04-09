@@ -1,0 +1,22 @@
+{
+    "manufacturer": "FujiFilm",
+    "film_name": "PROVIA 100F RDPIII",
+    "properties": {
+        "film_type": "reversal"
+    },
+    "density_anchors": {
+        "d_min": {
+            "r": 3.273,
+            "g": 3.508,
+            "b": 3.552
+        },
+        "d_max": {
+            "r": 0.0,
+            "g": 0.128,
+            "b": 0.133
+        }
+    },
+    "data_files": {
+        "characteristic_curve": "fujifilm_provia_100f_rdpiii_char.csv"
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "manufacturer": "FujiFilm",
+    "film_name": "ASTIA 100F RAP100F",
+    "properties": {
+        "film_type": "reversal"
+    },
+    "density_anchors": {
+        "d_min": {
+            "r": 3.28,
+            "g": 3.414,
+            "b": 3.47
+        },
+        "d_max": {
+            "r": 0.109,
+            "g": 0.174,
+            "b": 0.0
+        }
+    },
+    "data_files": {
+        "characteristic_curve": "fujifilm_astia_100f_rap100f_char.csv"
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "manufacturer": "FujiFilm",
+    "film_name": "VELVIA 100 RVP100",
+    "properties": {
+        "film_type": "reversal"
+    },
+    "density_anchors": {
+        "d_min": {
+            "r": 3.38,
+            "g": 3.825,
+            "b": 3.696
+        },
+        "d_max": {
+            "r": 0.161,
+            "g": 0.164,
+            "b": 0.14
+        }
+    },
+    "data_files": {
+        "characteristic_curve": "fujifilm_velvia_100_rvp100_char.csv"
+    }
+}

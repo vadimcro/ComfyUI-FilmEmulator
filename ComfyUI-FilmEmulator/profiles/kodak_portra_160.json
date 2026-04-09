@@ -1,0 +1,22 @@
+{
+    "manufacturer": "Kodak",
+    "film_name": "PORTRA 160",
+    "properties": {
+        "film_type": "negative"
+    },
+    "density_anchors": {
+        "d_min": {
+            "r": 0.0,
+            "g": 0.62,
+            "b": 0.0
+        },
+        "d_max": {
+            "r": 1.804,
+            "g": 2.396,
+            "b": 2.946
+        }
+    },
+    "data_files": {
+        "characteristic_curve": "kodak_portra_160_char.csv"
+    }
+}

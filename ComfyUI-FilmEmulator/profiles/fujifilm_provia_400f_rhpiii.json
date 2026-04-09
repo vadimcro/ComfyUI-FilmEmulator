@@ -1,0 +1,22 @@
+{
+    "manufacturer": "FujiFilm",
+    "film_name": "PROVIA 400F RHPIII",
+    "properties": {
+        "film_type": "reversal"
+    },
+    "density_anchors": {
+        "d_min": {
+            "r": 3.135,
+            "g": 3.32,
+            "b": 2.893
+        },
+        "d_max": {
+            "r": 0.088,
+            "g": 0.103,
+            "b": 0.081
+        }
+    },
+    "data_files": {
+        "characteristic_curve": "fujifilm_provia_400f_rhpiii_char.csv"
+    }
+}

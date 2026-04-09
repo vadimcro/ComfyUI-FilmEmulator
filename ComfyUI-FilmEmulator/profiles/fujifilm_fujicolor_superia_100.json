@@ -1,0 +1,22 @@
+{
+    "manufacturer": "FujiFilm",
+    "film_name": "FUJICOLOR SUPERIA 100",
+    "properties": {
+        "film_type": "negative"
+    },
+    "density_anchors": {
+        "d_min": {
+            "r": 0.226,
+            "g": 0.452,
+            "b": 0.88
+        },
+        "d_max": {
+            "r": 3.025,
+            "g": 3.502,
+            "b": 3.411
+        }
+    },
+    "data_files": {
+        "characteristic_curve": "fujifilm_fujicolor_superia_100_char.csv"
+    }
+}

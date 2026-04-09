@@ -1,0 +1,22 @@
+{
+    "manufacturer": "FujiFilm",
+    "film_name": "Velvia 50 RVP",
+    "properties": {
+        "film_type": "reversal"
+    },
+    "density_anchors": {
+        "d_min": {
+            "r": 3.336,
+            "g": 3.788,
+            "b": 3.686
+        },
+        "d_max": {
+            "r": 0.168,
+            "g": 0.0,
+            "b": 0.0
+        }
+    },
+    "data_files": {
+        "characteristic_curve": "fujifilm_velvia_50_rvp_char.csv"
+    }
+}

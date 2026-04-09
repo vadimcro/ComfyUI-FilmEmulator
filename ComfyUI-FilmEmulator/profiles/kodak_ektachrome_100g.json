@@ -1,0 +1,22 @@
+{
+    "manufacturer": "Kodak",
+    "film_name": "Ektachrome 100G",
+    "properties": {
+        "film_type": "reversal"
+    },
+    "density_anchors": {
+        "d_min": {
+            "r": 3.22,
+            "g": 3.578,
+            "b": 3.738
+        },
+        "d_max": {
+            "r": 0.091,
+            "g": 0.096,
+            "b": 0.09
+        }
+    },
+    "data_files": {
+        "characteristic_curve": "kodak_ektachrome_100g_char.csv"
+    }
+}
