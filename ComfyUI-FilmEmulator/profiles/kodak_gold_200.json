@@ -1,0 +1,22 @@
+{
+    "manufacturer": "Kodak",
+    "film_name": "GOLD 200",
+    "properties": {
+        "film_type": "negative"
+    },
+    "density_anchors": {
+        "d_min": {
+            "r": 0.31,
+            "g": 0.965,
+            "b": 1.003
+        },
+        "d_max": {
+            "r": 2.038,
+            "g": 2.535,
+            "b": 3.089
+        }
+    },
+    "data_files": {
+        "characteristic_curve": "kodak_gold_200_char.csv"
+    }
+}
