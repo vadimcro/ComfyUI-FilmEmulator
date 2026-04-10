@@ -1,7 +1,7 @@
 [project]
 name = "ComfyUI-FilmEmulator"
 description = "A professional-grade imaging pipeline designed to Dehance sterile, microscopically sharp digital and AI-generated images into authentic analog photographs"
-version = "1.0.0"
+version = "1.0.1"
 license = "MIT"
 
 [project.urls]
