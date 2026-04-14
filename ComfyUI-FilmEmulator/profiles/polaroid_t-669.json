@@ -1,0 +1,22 @@
+{
+    "manufacturer": "Polaroid",
+    "film_name": "T-669",
+    "properties": {
+        "film_type": "reversal"
+    },
+    "density_anchors": {
+        "d_min": {
+            "r": 1.696,
+            "g": 2.195,
+            "b": 1.762
+        },
+        "d_max": {
+            "r": 0.114,
+            "g": 0.143,
+            "b": 0.159
+        }
+    },
+    "data_files": {
+        "characteristic_curve": "polaroid_t-669_char.csv"
+    }
+}

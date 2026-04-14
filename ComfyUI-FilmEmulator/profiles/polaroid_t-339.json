@@ -1,0 +1,22 @@
+{
+    "manufacturer": "Polaroid",
+    "film_name": "T-339",
+    "properties": {
+        "film_type": "reversal"
+    },
+    "density_anchors": {
+        "d_min": {
+            "r": 2.309,
+            "g": 2.116,
+            "b": 1.955
+        },
+        "d_max": {
+            "r": 0.081,
+            "g": 0.077,
+            "b": 0.088
+        }
+    },
+    "data_files": {
+        "characteristic_curve": "polaroid_t-339_char.csv"
+    }
+}
