@@ -4,7 +4,6 @@ import json
 import csv
 import os
 import torch
-import scipy.ndimage as ndimage
 
 # Get the directory of this script to locate the 'profiles' folder
 NODE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -22,17 +21,31 @@ class AnalogFilmEmulator:
         return {
             "required": {
                 "image": ("IMAGE", {"tooltip": "Input image (AI generated or digital photo)."}),
-                "film_profile": (profile_list, {"tooltip": "Select the empirical FILM characteristic curve from JSON file."}),
+                "film_profile": (profile_list, {"tooltip": "Select the empirical JSON characteristic curve."}),
+                
+                # 1. LENS OPTICS
                 "optical_softness": ("FLOAT", {"default": 15.0, "min": 0.0, "max": 100.0, "step": 1.0, "tooltip": "Simulates vintage lens defocus to break artificial digital sharpness."}),
-                "chromatic_aberration": ("INT", {"default": 2, "min": 0, "max": 10, "step": 1, "tooltip": "Lateral color fringing (shifts Red and Blue channels)."}),
+                "chromatic_aberration": ("INT", {"default": 2, "min": 0, "max": 20, "step": 1, "tooltip": "Lateral color fringing (shifts Red and Blue channels)."}),
+                
+                # 2. LIGHT & SCATTER
                 "cinelog_flattening": ("FLOAT", {"default": 25.0, "min": 0.0, "max": 100.0, "step": 1.0, "tooltip": "Pre-flattens digital contrast to mimic a Cine-Log scan."}),
                 "halation_amount": ("FLOAT", {"default": 20.0, "min": 0.0, "max": 100.0, "step": 1.0, "tooltip": "Red emulsion scatter localized around high-contrast bright edges."}),
                 "lens_bloom": ("FLOAT", {"default": 10.0, "min": 0.0, "max": 100.0, "step": 1.0, "tooltip": "Wide, soft white glow simulating light scattering inside a vintage lens."}),
-                "print_contrast": ("FLOAT", {"default": 40.0, "min": 0.0, "max": 100.0, "step": 1.0, "tooltip": "Applies an analog darkroom S-Curve for Toe and and Shoulder."}),
+                
+                # 3. PRINT CHEMISTRY
+                "print_contrast": ("FLOAT", {"default": 40.0, "min": 0.0, "max": 100.0, "step": 1.0, "tooltip": "Applies an analog darkroom S-Curve for dense shadows and rolled highlights."}),
                 "split_tone": ("FLOAT", {"default": 15.0, "min": -50.0, "max": 50.0, "step": 1.0, "tooltip": "Pushes midtones warm (yellow/red) and shadows cool (cyan/blue). Negative values reverse this."}),
-                "grain_amount": ("FLOAT", {"default": 30.0, "min": 0.0, "max": 100.0, "step": 1.0, "tooltip": "Intensity of the physical silver-halide dye clouds (GRAIN)."}),
-                "grain_size": ("FLOAT", {"default": 1.5, "min": 1.0, "max": 5.0, "step": 0.1, "tooltip": "Physical coarseness/clumping size of the grain crystals.(RMS GRANULARITY)"}),
+                
+                # 4. GRAIN & MIX
+                "grain_amount": ("FLOAT", {"default": 30.0, "min": 0.0, "max": 100.0, "step": 1.0, "tooltip": "Intensity of the physical silver-halide dye clouds. Peaks in midtones, vanishes in pure whites."}),
+                "grain_size": ("FLOAT", {"default": 1.5, "min": 1.0, "max": 10.0, "step": 0.1, "tooltip": "Physical coarseness/clumping size of the grain crystals."}),
                 "overall_mix": ("FLOAT", {"default": 100.0, "min": 0.0, "max": 100.0, "step": 1.0, "tooltip": "Opacity blend of the final analog effect over the original image."}),
+                
+                # 5. EDGE IMPERFECTIONS (Applied Last)
+                "field_flatness_amt": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 100.0, "step": 1.0, "tooltip": "Simulates optical degradation and softness towards the extreme edges of the lens elements."}),
+                "field_flatness_falloff": ("FLOAT", {"default": 40.0, "min": 0.0, "max": 100.0, "step": 1.0, "tooltip": "0% = Only absolute extreme corners. 100% = Softness creeps heavily towards the center."}),
+                "vignette_intensity": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 100.0, "step": 1.0, "tooltip": "Darkens the corners of the image due to physical lens barrel shadow."}),
+                "vignette_falloff": ("FLOAT", {"default": 30.0, "min": 0.0, "max": 100.0, "step": 1.0, "tooltip": "0% = Only absolute extreme corners. 100% = Shadow creeps heavily towards the center."}),
             }
         }
 
@@ -41,9 +54,10 @@ class AnalogFilmEmulator:
     CATEGORY = "image/postprocessing"
 
     def apply_emulation(self, image, film_profile, optical_softness, chromatic_aberration, cinelog_flattening, 
-                        halation_amount, lens_bloom, print_contrast, split_tone, grain_amount, grain_size, overall_mix):
+                        halation_amount, lens_bloom, print_contrast, split_tone, grain_amount, grain_size, overall_mix,
+                        field_flatness_amt, field_flatness_falloff, vignette_intensity, vignette_falloff):
         
-        # 1. Load the JSON Profile dynamically
+        # 1. Load JSON Profile
         profile_path = os.path.join(PROFILES_DIR, film_profile)
         try:
             with open(profile_path, 'r') as f:
@@ -56,7 +70,7 @@ class AnalogFilmEmulator:
             log_e_grid = []
             with open(csv_full_path, 'r') as f:
                 reader = csv.reader(f)
-                next(reader) # Skip headers
+                next(reader) 
                 for row in reader:
                     log_e_grid.append(float(row[0]))
                     curve_data['r'].append(float(row[1]))
@@ -67,17 +81,13 @@ class AnalogFilmEmulator:
                 curve_data[ch] = np.array(curve_data[ch])
         except Exception as e:
             print(f"Error loading profile: {e}")
-            return (image,) # Return original image if profile fails to load
+            return (image,) 
 
-        # 2. Process the Image Batch
-        # ComfyUI image tensors are shaped [Batch, Height, Width, Channels]
+        # 2. Process Image Batch
         processed_batch = []
-        
         for i in range(image.shape[0]):
-            # Convert PyTorch Tensor to NumPy Array [H, W, C]
             img_np = image[i].cpu().numpy()
             
-            # Execute our trusted math engine
             out_np = self.process_engine(
                 img_array=img_np,
                 soft_amt=optical_softness,
@@ -90,28 +100,44 @@ class AnalogFilmEmulator:
                 grain_amt=grain_amount,
                 grain_size=grain_size,
                 strength_pct=overall_mix,
+                ff_amt=field_flatness_amt,
+                ff_fall=field_flatness_falloff,
+                vig_amt=vignette_intensity,
+                vig_fall=vignette_falloff,
                 profile_data=profile_data,
                 log_e_grid=log_e_grid,
                 curve_data=curve_data
             )
-            
-            # Convert back to Tensor
             processed_batch.append(torch.from_numpy(out_np))
 
-        # Stack back into [B, H, W, C]
         out_tensor = torch.stack(processed_batch)
         return (out_tensor,)
 
-    # Paste your ENTIRE `process_engine` function here exactly as it was in v17.
-    # Note: I added profile_data, log_e_grid, and curve_data as arguments so the class can access them.
+    def _generate_radial_mask(self, h, w, falloff_pct):
+        """ Generates a smoothstep radial mask for Vignette and Field Flatness """
+        y, x = np.ogrid[:h, :w]
+        cy, cx = h / 2.0, w / 2.0
+        dist = np.sqrt((x - cx)**2 + (y - cy)**2)
+        max_dist = np.sqrt(cx**2 + cy**2)
+        norm_dist = dist / max_dist
+        
+        safe_radius = 1.0 - (falloff_pct / 100.0)
+        
+        mask = (norm_dist - safe_radius) / (1.0 - safe_radius + 1e-5)
+        mask = np.clip(mask, 0, 1)
+        # Hermite smoothstep for organic falloff
+        mask = mask * mask * (3 - 2 * mask)
+        return np.stack([mask]*3, axis=-1)
+
     def process_engine(self, img_array, soft_amt, ca_amt, flatten_pct, hal_pct, bloom_pct, 
                        contrast_pct, split_pct, grain_amt, grain_size, strength_pct, 
+                       ff_amt, ff_fall, vig_amt, vig_fall,
                        profile_data, log_e_grid, curve_data):
         
         img = np.copy(img_array)
         h, w, _ = img.shape
 
-        # --- 1. OPTICS ---
+        # --- 1. OPTICS (Base Softness & CA) ---
         soft = soft_amt / 100.0
         ca = int(ca_amt)
         if soft > 0:
@@ -236,5 +262,17 @@ class AnalogFilmEmulator:
             grain_mask_3d = np.stack([grain_mask]*3, axis=-1)
 
             blended = blended + (noise * grain_mask_3d * grain * 0.15)
+
+        # --- 6. EDGE IMPERFECTIONS (APPLIED LAST) ---
+        if ff_amt > 0:
+            ff_mask = self._generate_radial_mask(h, w, ff_fall)
+            max_sigma = (w * 0.005) * (ff_amt / 100.0) 
+            blurred_img = cv2.GaussianBlur(blended, (0,0), max_sigma)
+            blended = (blended * (1.0 - ff_mask)) + (blurred_img * ff_mask)
+
+        if vig_amt > 0:
+            vig_mask = self._generate_radial_mask(h, w, vig_fall)
+            intensity = vig_amt / 100.0
+            blended = blended * (1.0 - (vig_mask * intensity))
 
         return np.clip(blended, 0, 1)
